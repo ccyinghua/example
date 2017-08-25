@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <style>
+        html, body { margin:0; }
+    </style>
+</head>
+<body>
+    <canvas id="draw">您的浏览器不支持canvas</canvas>
+</body>
+</html>
+<script>
+    const canvas = document.querySelector('#draw');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    ctx.strokeStyle = "#BADA55";  //图形轮廓颜色
+    ctx.lineJoin = 'round';  //线条之间的拐角类型
+    ctx.lineCap = 'round';   //线条末端样式
+    ctx.lineWidth = 100;   //线条宽度
+
+
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let hue = 0;
+    let direction = true;
+
+    function draw(e){
+        if(!isDrawing)return;
+        console.log(e);
+        ctx.strokeStyle = `hsl(${hue},100%,50%)`;   //颜色
+
+        ctx.beginPath();  //起始一条路径，或重置当前路径
+        ctx.moveTo(lastX,lastY);  //起点
+        ctx.lineTo(e.offsetX,e.offsetY);  //终点-鼠标相对于元素的位置
+        ctx.stroke();   //绘制前面定义的路径
+
+        [lastX,lastY] = [e.offsetX,e.offsetY];
+
+
+        //变颜色
+        hue++;
+        if(hue>=360){
+            hue = 0;
+        }
+
+        //线条宽度的变化
+        if(ctx.lineWidth>=100 || ctx.lineWidth<=1){
+            direction = !direction;
+        }
+        if(direction){
+            ctx.lineWidth++;
+        }else{
+            ctx.lineWidth--;
+        }
+
+    }
+
+
+    canvas.addEventListener('mousedown',(e) => {
+        isDrawing = true;
+        [lastX,lastY] = [e.offsetX,e.offsetY];  //设置鼠标点的位置为起点
+    });
+
+    canvas.addEventListener('mousemove',draw);
+    canvas.addEventListener('mouseup', ()=> isDrawing = false);
+    canvas.addEventListener('mouseout', ()=> isDrawing = false);
+</script>
+
+
+
+
+
+
+
+
+
+
+
